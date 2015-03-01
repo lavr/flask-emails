@@ -1,0 +1,26 @@
+language: python
+
+sudo: no
+
+python:
+  - "2.6"
+  - "2.7"
+  - "3.3"
+  - "3.4"
+
+script: nosetests --with-coverage --cover-package=flask_emails
+
+before_install:
+  - travis_retry pip install coverage coveralls nose pytest mock
+
+install:
+  - travis_retry pip install -r requirements.txt
+
+cache:
+  directories:
+    - $HOME/.pip-cache/
+
+after_success:
+  # Report coverage results to coveralls.io
+  - coveralls
+
