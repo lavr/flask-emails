@@ -1,10 +1,10 @@
 # encoding: utf-8
-import pytest
 from nose.plugins.skip import Skip, SkipTest
 import string
 import random
-import emails
 from flask import Flask
+
+import emails
 from flask_emails.config import EmailsConfig
 import flask_emails
 
@@ -20,7 +20,7 @@ def test_deault_config():
                               u'ssl': False, u'host': u'localhost', u'timeout': 30,
                               u'user': u'', u'fail_silently': True, u'port': 25}
     assert c.message_options == {u'default_from': None}
-    assert c.backend_cls == emails.smtp.backend.SMTPBackend
+    assert c.backend_cls == emails.backend.smtp.SMTPBackend
 
 
 def _random_string(length=16):
@@ -97,7 +97,7 @@ def test_flask_send_dummy():
     ctx = app.test_request_context()
     ctx.push()
     m = Message(**SAMPLE_MESSAGE)
-    m.send()
+    m.send(smtp={'timeout': 1})
 
 
 def test_flask_send_real():

@@ -17,6 +17,9 @@ def get_namespace(obj, namespace, valid_keys=None):
 
 
 class EmailsConfig:
+    """
+    Configuration wrapper reads EMAIL_* options from Flask application config.
+    """
 
     _default_smtp_options = {
         'host': 'localhost',
@@ -37,12 +40,17 @@ class EmailsConfig:
     }
 
     _default_backend_options = {
-        'backend': 'emails.smtp.SMTPBackend'
+        'backend': 'emails.backend.smtp.SMTPBackend'
     }
 
     def __init__(self, app=None, config=None):
+        """
+        Gets configuration options from Flask **app** object and dict-like **config** parameter.
+
+        Parameters from **config** overrides **app** config options.
+        """
         self._config = {}
-        self._app = None
+        self._app = app
         if app:
             self._app = app
             self._config = app.config
