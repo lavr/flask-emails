@@ -60,5 +60,5 @@ Default: 0
 See debug parameter in smtplib.SMTP
 """
 
-from .message import Message
+from .message import Message, init_app
 from .config import EmailsConfig
