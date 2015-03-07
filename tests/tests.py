@@ -1,7 +1,12 @@
 # encoding: utf-8
-import pytest
 from nose.plugins.skip import Skip, SkipTest
+import string
+import random
 from flask import Flask
+
+import emails
+from flask_emails.config import EmailsConfig
+import flask_emails
 
 SAMPLE_MESSAGE = {'html': '<p>Test from flask.ext.emails',
                   'mail_from': 's@lavr.me',
@@ -9,37 +14,67 @@ SAMPLE_MESSAGE = {'html': '<p>Test from flask.ext.emails',
                   'subject': 'Test from flask.ext.emails'}
 
 
-def test_config():
-    app = Flask(__name__)
-    app.config = {'EMAIL_HOST': 'host',
-                  'EMAIL_HOST_USER': 'user',
-                  'EMAIL_HOST_PASSWORD': 'password',
-                  'EMAIL_DEFAULT_FROM': 'a@b.com',
-                  'EMAIL_UNKNOWN_OPTION': 'xxx',
-                  'OTHER_OPTION': 'yyy'}
+def test_deault_config():
+    c = EmailsConfig()
+    assert c.smtp_options == {u'tls': False, u'debug': 0, u'password': u'',
+                              u'ssl': False, u'host': u'localhost', u'timeout': 30,
+                              u'user': u'', u'fail_silently': True, u'port': 25}
+    assert c.message_options == {u'default_from': None}
+    assert c.backend_cls == emails.backend.smtp.SMTPBackend
 
-    from flask.ext.emails.config import EmailsConfig
-    o = EmailsConfig(app)
-    print(o.smtp_options)
-    assert o.smtp_options == {u'tls': False,
-                              u'debug': 0,
-                              u'port': 25,
-                              u'timeout': 30,
-                              u'ssl': False,
-                              u'host': 'host',
-                              u'password': 'password',
-                              u'user': 'user',
-                              u'fail_silently': True}
 
-    print(o.message_options)
-    assert o.message_options == {'default_from': 'a@b.com'}
+def _random_string(length=16):
+    return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)
+                   for _ in range(length))
 
-    app.config.update({'EMAIL_SSL_CERTFILE': '1.cer',
-                  'EMAIL_SSL_KEYFILE': '1.key'})
-    o = EmailsConfig(app)
-    #print(o.smtp_options)
-    assert o.smtp_options['certfile'] == '1.cer'
-    assert o.smtp_options['keyfile'] == '1.key'
+
+def test_config_smtp_options():
+
+    default_smtp_options = EmailsConfig().smtp_options
+
+    current_config = {}
+    for config_option_name, smtp_option, value in (
+            ('EMAIL_HOST', 'host', _random_string()),
+            ('EMAIL_HOST_USER', 'user', _random_string()),
+            ('EMAIL_HOST_PASSWORD', 'password', _random_string()),
+            ('EMAIL_PORT', 'port', random.randint(0, 65000)),
+            ('EMAIL_USE_SSL', 'ssl', not default_smtp_options['ssl']),
+            ('EMAIL_SSL_CERTFILE', 'certfile', _random_string()),
+            ('EMAIL_SSL_KEYFILE', 'keyfile', _random_string()),
+            ('EMAIL_TIMEOUT', 'timeout', random.random()),
+            ('EMAIL_SMTP_DEBUG', 'debug', random.randint(0, 3))
+    ):
+        print(config_option_name, smtp_option, value)
+        current_config[config_option_name] = value
+        c = EmailsConfig(config=current_config)
+        print(c.smtp_options[smtp_option])
+        assert c.smtp_options[smtp_option] == value
+
+
+def test_config_message_options():
+
+    current_config = {}
+    for config_option_name, message_option, value in (
+            ('EMAIL_DEFAULT_FROM', 'default_from', _random_string()),
+    ):
+        print(config_option_name, message_option, value)
+        current_config[config_option_name] = value
+        c = EmailsConfig(config=current_config)
+        print(c.message_options[message_option])
+        assert c.message_options[message_option] == value
+
+
+def test_config_backend_cls():
+    c = EmailsConfig(config={'EMAIL_BACKEND': 'flask_emails.backends.DummyBackend'})
+    assert c.backend_cls == flask_emails.backends.DummyBackend
+
+
+def test_unknown_options():
+    d = EmailsConfig()
+    c = EmailsConfig(config={'EMAIL_FRONTEND42': 'X', 'OTHER_OPTION': 13})
+    assert c.smtp_options == d.smtp_options
+    assert c.message_options == d.message_options
+    assert c.backend_cls == d.backend_cls
 
 
 def test_flask_message():
@@ -62,7 +97,7 @@ def test_flask_send_dummy():
     ctx = app.test_request_context()
     ctx.push()
     m = Message(**SAMPLE_MESSAGE)
-    m.send()
+    m.send(smtp={'timeout': 1})
 
 
 def test_flask_send_real():

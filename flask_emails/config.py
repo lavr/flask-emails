@@ -17,6 +17,9 @@ def get_namespace(obj, namespace, valid_keys=None):
 
 
 class EmailsConfig:
+    """
+    Configuration wrapper reads EMAIL_* options from Flask application config.
+    """
 
     _default_smtp_options = {
         'host': 'localhost',
@@ -37,25 +40,36 @@ class EmailsConfig:
     }
 
     _default_backend_options = {
-        'backend': 'emails.smtp.SMTPBackend'
+        'backend': 'emails.backend.smtp.SMTPBackend'
     }
 
-    def __init__(self, app):
+    def __init__(self, app=None, config=None):
+        """
+        Gets configuration options from Flask **app** object and dict-like **config** parameter.
+
+        Parameters from **config** overrides **app** config options.
+        """
+        self._config = {}
         self._app = app
+        if app:
+            self._app = app
+            self._config = app.config
+        if config:
+            self._config.update(config)
 
     @cached_property
     def options(self):
         """
         Reads all EMAIL_ options and set default values.
         """
-        config = self._app.config
+        config = self._config
         o = {}
         o.update(self._default_smtp_options)
         o.update(self._default_message_options)
         o.update(self._default_backend_options)
         o.update(get_namespace(config, 'EMAIL_', valid_keys=o.keys()))
         o['port'] = int(o['port'])
-        o['timeout'] = int(o['timeout'])
+        o['timeout'] = float(o['timeout'])
         return o
 
     @cached_property
