@@ -1,6 +1,4 @@
 # encoding: utf-8
-from flask import current_app
-import emails
 
 __version__ = '0.3.7'
 
@@ -11,7 +9,6 @@ Example:
     from flask.ext.emails import Message
 
     app = Flask(__name__)
-    Message.init_app(app)
 
     Message(html="...").send()
 
@@ -64,3 +61,4 @@ See debug parameter in smtplib.SMTP
 """
 
 from .message import Message
+from .config import EmailsConfig
