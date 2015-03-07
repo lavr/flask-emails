@@ -32,7 +32,7 @@ settings.update(
     name='flask-emails',
     version=find_version('flask_emails/__init__.py'),
     description='Elegant and simple email library for Flask.',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Sergey Lavrinenko',
     author_email='s@lavr.me',
     url='https://github.com/lavr/flask-emails',
