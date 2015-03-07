@@ -40,22 +40,28 @@ class EmailsConfig:
         'backend': 'emails.smtp.SMTPBackend'
     }
 
-    def __init__(self, app):
-        self._app = app
+    def __init__(self, app=None, config=None):
+        self._config = {}
+        self._app = None
+        if app:
+            self._app = app
+            self._config = app.config
+        if config:
+            self._config.update(config)
 
     @cached_property
     def options(self):
         """
         Reads all EMAIL_ options and set default values.
         """
-        config = self._app.config
+        config = self._config
         o = {}
         o.update(self._default_smtp_options)
         o.update(self._default_message_options)
         o.update(self._default_backend_options)
         o.update(get_namespace(config, 'EMAIL_', valid_keys=o.keys()))
         o['port'] = int(o['port'])
-        o['timeout'] = int(o['timeout'])
+        o['timeout'] = float(o['timeout'])
         return o
 
     @cached_property
