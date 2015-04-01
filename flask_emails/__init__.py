@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-__version__ = '0.4'
+__version__ = '0.5'
 
 """
 Example:
@@ -15,3 +15,4 @@ Example:
 
 from .message import Message, init_app
 from .config import EmailsConfig
+

@@ -37,7 +37,7 @@ settings.update(
     author_email='s@lavr.me',
     url='https://github.com/lavr/flask-emails',
     packages=['flask_emails', ],
-    install_requires=['emails', ],
+    install_requires=['emails>=0.5', ],
     license=open('LICENSE').read(),
     zip_safe=False,
     classifiers=(
