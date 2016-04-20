@@ -9,4 +9,4 @@ class DummyBackend(object):
         pass
 
     def sendmail(self, **kw):
-        return [DummyResponse()]
+        return DummyResponse()
