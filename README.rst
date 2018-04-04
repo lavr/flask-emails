@@ -41,7 +41,7 @@ Create and send email:
                           mail_from=("John Brown", "john@gmail.com"))
         message.attach(data=open('Event.ics', 'rb'), filename='Event.ics')
 
-        r = message.send(mail_to=("Nick Jackson", "nick@gmail.com"))
+        r = message.send(to=("Nick Jackson", "nick@gmail.com"))
 
         if r.status_code not in [250, ]:
             # message is not sent, deal with this
