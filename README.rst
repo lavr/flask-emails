@@ -34,7 +34,7 @@ Create and send email:
 
 .. code-block:: python
 
-        from flask.ext.emails import Message
+        from flask_emails import Message
 
         message = Message(html='<html><p>Hi! ...',
                           subject="Party today",
