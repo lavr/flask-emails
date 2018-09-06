@@ -8,10 +8,10 @@ import emails
 from flask_emails.config import EmailsConfig
 import flask_emails
 
-SAMPLE_MESSAGE = {'html': '<p>Test from flask.ext.emails',
+SAMPLE_MESSAGE = {'html': '<p>Test from flask_emails',
                   'mail_from': 's@lavr.me',
                   'mail_to': 'sergei-nko@yandex.ru',
-                  'subject': 'Test from flask.ext.emails'}
+                  'subject': 'Test from flask_emails'}
 
 
 def test_deault_config():
@@ -83,7 +83,7 @@ def test_flask_message():
     ctx = app.test_request_context()
     ctx.push()
 
-    from flask.ext.emails import Message
+    from flask_emails import Message
     m = Message(html='...')
     assert m.mail_from == ('John Brawn', 'a@b.com')
 
@@ -92,7 +92,7 @@ def test_flask_send_dummy():
     # Send via dummy backend
     app = Flask(__name__)
     app.config.update({'EMAIL_BACKEND': 'flask_emails.backends.DummyBackend'})
-    from flask.ext.emails import Message
+    from flask_emails import Message
     # Message.init_app(app)
     ctx = app.test_request_context()
     ctx.push()
@@ -105,7 +105,7 @@ def test_flask_send_real():
     app = Flask(__name__)
     app.config.update({'EMAIL_HOST': 'mx.yandex.ru',
                        'EMAIL_FAIL_SILENTLY': False})
-    from flask.ext.emails import Message
+    from flask_emails import Message
     ctx = app.test_request_context()
     ctx.push()
     # Message.init_app(app)

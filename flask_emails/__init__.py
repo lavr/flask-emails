@@ -6,7 +6,7 @@ __version__ = '0.4.1'
 Example:
 
     from flask import Flask
-    from flask.ext.emails import Message
+    from flask_emails import Message
 
     app = Flask(__name__)
 

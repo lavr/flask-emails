@@ -36,7 +36,7 @@ Create and send email:
 
 .. code-block:: python
 
-        from flask.ext.emails import Message
+        from flask_emails import Message
 
         message = Message(html='<html><p>Hi! ...',
                           subject="Party today",
@@ -143,7 +143,7 @@ Example:
 
 .. code-block:: python
 
-    from flask.ext.emails import Message, EmailsConfig
+    from flask_emails import Message, EmailsConfig
 
     another_config = EmailsConfig(config={'EMAIL_HOST':'server2', ...})
     Message(config=another_config, html='...').send()
